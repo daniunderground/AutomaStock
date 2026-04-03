@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: var(--bg);
+  --color-foreground: var(--fg);
+  
+  /* Obsidian Flux Colors */
+  --color-surface: var(--surface);
+  --color-surface-container-lowest: var(--surface-container-lowest);
+  --color-surface-container-low: var(--surface-container-low);
+  --color-surface-container: var(--surface-container);
+  --color-surface-container-high: var(--surface-container-high);
+  --color-surface-container-highest: var(--surface-container-highest);
+  --color-surface-bright: var(--surface-bright);
+  
+  --color-primary-container: var(--primary-container);
+  --color-primary: var(--primary);
+  --color-secondary-container: var(--secondary-container);
+  --color-error: var(--error);
+  
+  --color-border: var(--border-color);
+}
+
+@layer base {
+  :root {
+    /* Forçando modo escuro nativo (Obsidian Flux theme) */
+    --bg: #0b1326; /* surface-dim / deep charcoal blue */
+    --fg: #dbe2fd; /* on-surface */
+    
+    --surface: #0b1326;
+    --surface-container-lowest: #060d20;
+    --surface-container-low: #131b2e;
+    --surface-container: #171f33;
+    --surface-container-high: #222a3e;
+    --surface-container-highest: #2d3449;
+    --surface-bright: #31394e;
+    
+    --primary: #6ee591;
+    --primary-container: #50c878;
+    
+    --secondary-container: #a90219;
+    --error: #ffb4ab;
+    
+    --border-color: transparent; /* "No-Line" Rule */
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--fg);
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-duration: 200ms;
+    /* Font family from design system */
+    font-family: 'Inter', sans-serif; 
+  }
+}
+
+@layer components {
+  /* Utilitário para o efeito Glassmorphism do Design System */
+  .glass-panel {
+    background-color: rgba(45, 52, 73, 0.6); /* surface-container-highest at 60% */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(62, 74, 63, 0.15); /* Ghost Border: outline-variant at 15% */
+  }
+}
