@@ -1,20 +1,18 @@
 @import "tailwindcss";
-
+@custom-variant dark (&:where(.dark, .dark *));
 @theme {
   --color-background: var(--bg);
   --color-foreground: var(--fg);
   
-  /* Obsidian Flux Colors */
+  /* Light Enterprise Theme Colors */
   --color-surface: var(--surface);
   --color-surface-container-lowest: var(--surface-container-lowest);
   --color-surface-container-low: var(--surface-container-low);
   --color-surface-container: var(--surface-container);
-  --color-surface-container-high: var(--surface-container-high);
-  --color-surface-container-highest: var(--surface-container-highest);
-  --color-surface-bright: var(--surface-bright);
   
-  --color-primary-container: var(--primary-container);
   --color-primary: var(--primary);
+  --color-primary-container: var(--primary-container);
+  --color-secondary: var(--secondary);
   --color-secondary-container: var(--secondary-container);
   --color-error: var(--error);
   
@@ -23,43 +21,106 @@
 
 @layer base {
   :root {
-    /* Forçando modo escuro nativo (Obsidian Flux theme) */
-    --bg: #0b1326; /* surface-dim / deep charcoal blue */
-    --fg: #dbe2fd; /* on-surface */
+    /* Tema Claro limpo (Estilo Nex) */
+    --bg: #F4F6F8; /* Light gray background */
+    --fg: #1F2937; /* Gray 800 - dark text */
     
-    --surface: #0b1326;
-    --surface-container-lowest: #060d20;
-    --surface-container-low: #131b2e;
-    --surface-container: #171f33;
-    --surface-container-high: #222a3e;
-    --surface-container-highest: #2d3449;
-    --surface-bright: #31394e;
+    --surface: #FFFFFF; /* White cards */
+    --surface-container-lowest: #FFFFFF;
+    --surface-container-low: #F9FAFB;
+    --surface-container: #F3F4F6;
     
-    --primary: #6ee591;
-    --primary-container: #50c878;
+    --primary: #0084FF; /* Nex signature blue */
+    --primary-container: #EBF5FF;
     
-    --secondary-container: #a90219;
-    --error: #ffb4ab;
+    --secondary: #6B7280; /* Gray 500 */
+    --secondary-container: #F3F4F6;
     
-    --border-color: transparent; /* "No-Line" Rule */
+    --error: #EF4444; /* Red 500 */
+    
+    --border-color: #E5E7EB; /* Gray 200 */
   }
 
+  body::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  body::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  body::-webkit-scrollbar-thumb {
+    background: #CBD5E1; /* Slate 300 */
+    border-radius: 4px;
+  }
+  body::-webkit-scrollbar-thumb:hover {
+    background: #94A3B8; /* Slate 400 */
+  }
+  
   body {
     background-color: var(--bg);
     color: var(--fg);
-    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
-    transition-duration: 200ms;
-    /* Font family from design system */
-    font-family: 'Inter', sans-serif; 
+    transition-property: color, background-color, border-color, fill, stroke;
+    transition-duration: 300ms;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 400;
+  }
+
+  /* Improve table rendering */
+  th {
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #6B7280;
+    letter-spacing: 0.05em;
   }
 }
 
 @layer components {
-  /* Utilitário para o efeito Glassmorphism do Design System */
+  /* Utilitários refatorados para o Design Light */
   .glass-panel {
-    background-color: rgba(45, 52, 73, 0.6); /* surface-container-highest at 60% */
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(62, 74, 63, 0.15); /* Ghost Border: outline-variant at 15% */
+    background-color: #FFFFFF;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  }
+  
+  .glass-panel:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  }
+
+  /* Mantendo nomes de classe para não quebrar componentes não alterados, mas tirando o efeito neon */
+  .neon-glow {
+    box-shadow: 0 2px 10px rgba(0, 132, 255, 0.2);
+  }
+  
+  .text-glow {
+    /* No glow in light theme, just solid color */
+    text-shadow: none;
+  }
+  
+  .gradient-text {
+    /* Nex just uses solid primary blue */
+    color: var(--primary);
+  }
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  
+  #quotation-print-area, #quotation-print-area * {
+    visibility: visible;
+  }
+  
+  #quotation-print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: white !important;
+    box-shadow: none !important;
+    border: none !important;
   }
 }

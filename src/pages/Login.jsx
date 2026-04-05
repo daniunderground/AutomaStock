@@ -31,74 +31,74 @@ export function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0b1326] flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden font-['Inter']">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden font-sans transition-colors">
       
       {/* Background decorations */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#6ee591]/10 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#243457]/30 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-400/20 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-400/20 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center relative z-10 mb-8">
         <div className="flex justify-center items-center mb-6 relative">
-          <div className="absolute inset-0 bg-[#6ee591]/20 blur-xl rounded-full w-20 h-20 mx-auto" />
-          <div className="w-20 h-20 bg-gradient-to-br from-[#171f33] to-[#0d1627] rounded-3xl border border-[#3e4a3f]/40 flex items-center justify-center shadow-[0_8px_32px_rgba(0,0,0,0.4)] relative z-10 p-4">
-            <CircuitBoard className="w-10 h-10 text-[#6ee591]" />
+          <div className="absolute inset-0 bg-blue-400/20 blur-xl rounded-full w-20 h-20 mx-auto" />
+          <div className="w-20 h-20 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 flex items-center justify-center shadow-md relative z-10 p-4 transition-colors">
+            <CircuitBoard className="w-10 h-10 text-blue-600 dark:text-blue-400" />
           </div>
         </div>
-        <h2 className="mt-2 text-center text-4xl font-['Manrope'] font-bold text-[#dbe2fd] tracking-tight">
+        <h2 className="mt-2 text-center text-4xl font-bold text-gray-900 dark:text-gray-50 tracking-tight">
           AutomaStock
         </h2>
-        <p className="mt-3 text-center text-[#bdcabc] text-lg max-w-sm mx-auto">
+        <p className="mt-3 text-center text-gray-500 dark:text-gray-400 text-lg max-w-sm mx-auto">
           Gerencie seu inventário técnico com precisão e controle.
         </p>
       </div>
 
       <div className="mt-2 sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-        <div className="bg-[#131b2e]/80 backdrop-blur-xl py-10 px-6 shadow-[0_24px_64px_rgba(0,0,0,0.5)] sm:rounded-3xl border border-[#3e4a3f]/30 sm:px-12">
+        <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl py-10 px-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] sm:rounded-2xl border border-gray-100 dark:border-gray-700 sm:px-12 transition-colors">
           
           <div className="mb-8">
-            <h3 className="text-xl font-bold text-[#dbe2fd]">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-gray-50">
               {isLogin ? 'Bem-vindo de volta' : 'Criar nova conta'}
             </h3>
-            <p className="text-sm text-[#bdcabc] mt-1">
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
               {isLogin ? 'Insira suas credenciais para acessar' : 'Preencha os dados e junte-se a nós'}
             </p>
           </div>
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             {error && (
-              <div className="bg-[#ffb4ab]/10 border border-[#ffb4ab]/20 text-[#ffb4ab] px-4 py-3 rounded-xl text-sm font-medium flex items-center shadow-inner">
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm font-medium flex items-center shadow-sm">
                 {error}
               </div>
             )}
             
             <div className="space-y-5">
               <div>
-                <label className="block text-sm font-semibold text-[#bdcabc] mb-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                   Endereço de Email
                 </label>
-                <div className="mt-1 relative rounded-xl shadow-sm">
+                <div className="mt-1 relative rounded-lg shadow-sm">
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="block w-full px-4 py-3 border border-[#3e4a3f]/30 rounded-xl bg-[#0b1326] text-[#dbe2fd] placeholder-[#bdcabc]/30 focus:outline-none focus:ring-2 focus:ring-[#6ee591]/50 focus:border-transparent transition-all sm:text-sm hover:border-[#3e4a3f]/60"
+                    className="block w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-50 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 dark:focus:border-blue-400 transition-all sm:text-sm hover:border-gray-400 dark:hover:border-gray-500 shadow-sm"
                     placeholder="voce@exemplo.com"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-[#bdcabc] mb-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                   Senha Estratégica
                 </label>
-                <div className="mt-1 relative rounded-xl shadow-sm">
+                <div className="mt-1 relative rounded-lg shadow-sm">
                   <input
                     type="password"
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="block w-full px-4 py-3 border border-[#3e4a3f]/30 rounded-xl bg-[#0b1326] text-[#dbe2fd] placeholder-[#bdcabc]/30 focus:outline-none focus:ring-2 focus:ring-[#6ee591]/50 focus:border-transparent transition-all sm:text-sm hover:border-[#3e4a3f]/60"
+                    className="block w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700/50 text-gray-900 dark:text-gray-50 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 dark:focus:border-blue-400 transition-all sm:text-sm hover:border-gray-400 dark:hover:border-gray-500 shadow-sm"
                     placeholder="••••••••"
                   />
                 </div>
@@ -109,7 +109,7 @@ export function Login() {
               <button
                 type="submit"
                 disabled={loading}
-                className="group w-full flex justify-center items-center gap-2 py-3.5 px-4 border border-transparent rounded-xl shadow-[0_8px_24px_rgba(80,200,120,0.2)] text-sm font-bold text-[#00210c] bg-gradient-to-r from-[#6ee591] to-[#50c878] hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#0b1326] focus:ring-[#6ee591] disabled:opacity-70 transition-all transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+                className="group w-full flex justify-center items-center gap-2 py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-500 disabled:opacity-70 transition-all transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
               >
                 {loading ? (
                   <Loader2 className="w-5 h-5 animate-spin" />
@@ -122,13 +122,13 @@ export function Login() {
               </button>
             </div>
             
-            <div className="mt-8 text-center pt-6 border-t border-[#3e4a3f]/20">
-              <p className="text-sm text-[#bdcabc]">
+            <div className="mt-8 text-center pt-6 border-t border-gray-100 dark:border-gray-700">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 {isLogin ? 'Primeira vez aqui?' : 'Já é de casa?'}
                 <button
                   type="button"
                   onClick={() => setIsLogin(!isLogin)}
-                  className="ml-2 py-2 font-bold text-[#6ee591] hover:text-[#50c878] transition-colors focus:outline-none hover:underline"
+                  className="ml-2 py-2 font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors focus:outline-none hover:underline"
                 >
                   {isLogin ? 'Criar uma conta' : 'Fazer login'}
                 </button>
@@ -138,8 +138,8 @@ export function Login() {
         </div>
         
         {/* Footer text */}
-        <p className="mt-8 text-center text-xs text-[#bdcabc]/50 font-mono tracking-wider">
-          AUTOMASTOCK V1.0 • OBSIDIAN FLUX UI
+        <p className="mt-8 text-center text-xs text-gray-400 dark:text-gray-500 font-mono tracking-wider">
+          AUTOMASTOCK V1.0 • NEX UI
         </p>
       </div>
     </div>

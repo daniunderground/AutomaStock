@@ -1,10 +1,13 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { supabase } from '../lib/supabase';
 
-const useStore = create((set, get) => ({
-  session: null,
-  user: null,
-  theme: 'dark', // Padrão
+const useStore = create(
+  persist(
+    (set, get) => ({
+      session: null,
+      user: null,
+      theme: 'dark', // Padrão
   
   categories: [],
   products: [],
@@ -91,7 +94,13 @@ const useStore = create((set, get) => ({
       
     if (!error && data) {
       set((state) => ({ products: [data[0], ...state.products] }));
-      alert('Produto salvo com sucesso!');
+      
+      // Registrar no histórico se houver estoque inicial
+      if (data[0].quantidade > 0) {
+        await get().addMovimentacao(data[0].id, 'entrada', data[0].quantidade, 'Estoque Inicial (Cadastro)');
+      } else {
+        alert('Produto salvo com sucesso!');
+      }
     } else {
       console.error(error);
       alert('Erro ao salvar produto: ' + error.message);
@@ -111,6 +120,7 @@ const useStore = create((set, get) => ({
   },
 
   updateProduct: async (id, updates) => {
+    const oldProduct = get().products.find(p => p.id === id);
     const { error } = await supabase
       .from('produtos')
       .update(updates)
@@ -120,7 +130,16 @@ const useStore = create((set, get) => ({
       set((state) => ({
         products: state.products.map(p => p.id === id ? { ...p, ...updates } : p)
       }));
-      alert('Produto atualizado com sucesso!');
+
+      // Registrar no histórico se a quantidade foi alterada manualmente
+      if (updates.quantidade !== undefined && oldProduct && updates.quantidade !== oldProduct.quantidade) {
+        const diff = updates.quantidade - oldProduct.quantidade;
+        const tipo = diff > 0 ? 'entrada' : 'saida';
+        const qtdAbs = Math.abs(diff);
+        await get().addMovimentacao(id, tipo, qtdAbs, 'Ajuste Manual via Cadastro');
+      } else {
+        alert('Produto atualizado com sucesso!');
+      }
     } else {
       console.error(error);
       alert('Erro ao atualizar produto: ' + error.message);
@@ -226,6 +245,11 @@ const useStore = create((set, get) => ({
       return false;
     }
   }
-}));
+}),
+{
+  name: 'automastock-storage',
+  partialize: (state) => ({ theme: state.theme }), // Only persist the theme preference
+}
+));
 
 export default useStore;

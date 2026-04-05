@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, Package, Tags, Settings, History as HistoryIcon } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { motion } from 'framer-motion';
 
 const navItems = [
   { name: 'Dashboard', path: '/', icon: LayoutDashboard },
@@ -12,33 +13,43 @@ const navItems = [
 
 export function Sidebar() {
   return (
-    <aside className="hidden md:flex md:w-64 bg-[#060d20] flex-col h-full text-[#dbe2fd] shrink-0 border-r border-[#3e4a3f]/10">
-      <div className="h-20 flex items-center px-6 shrink-0 border-b border-[#3e4a3f]/10">
-        <h1 className="text-2xl font-bold bg-gradient-to-r from-[#6ee591] to-[#50c878] bg-clip-text text-transparent tracking-tight font-['Manrope']">
-          AutomaStock
-        </h1>
+    <aside className="hidden md:flex md:w-64 flex-col h-full shrink-0 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm z-20 transition-colors">
+      <div className="h-28 flex items-center justify-center shrink-0 border-b border-gray-100 dark:border-gray-700/50">
+         <img src="/logo.png" alt="AutomaStock Logo" className="h-24 w-auto object-contain" />
       </div>
-      <nav className="flex-1 py-6 px-4 space-y-2 overflow-y-auto">
+      <nav className="flex-1 py-6 px-4 space-y-1 overflow-y-auto">
         {navItems.map((item) => (
           <NavLink
             key={item.path}
             to={item.path}
             className={({ isActive }) =>
               cn(
-                "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200",
+                "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors relative group",
                 isActive 
-                  ? "bg-[#2d3449] text-[#6ee591] shadow-[0_4px_20px_rgba(219,226,253,0.02)]" 
-                  : "text-[#bdcabc] hover:bg-[#131b2e] hover:text-[#dbe2fd]"
+                  ? "text-[#0084FF] dark:text-blue-400 bg-[#EBF5FF] dark:bg-blue-500/10" 
+                  : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-gray-50"
               )
             }
           >
-            <item.icon className={cn("w-5 h-5", "opacity-90")} />
-            {item.name}
+             {({ isActive }) => (
+                <>
+                  {isActive && (
+                    <motion.div 
+                      layoutId="activeTabIndicator"
+                      className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-[#0084FF] rounded-r-md"
+                      initial={false}
+                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    />
+                  )}
+                  <item.icon className={cn("w-5 h-5 relative z-10 transition-colors", isActive ? "text-[#0084FF] dark:text-blue-400" : "text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300")} />
+                  <span className="relative z-10">{item.name}</span>
+                </>
+             )}
           </NavLink>
         ))}
       </nav>
-      <div className="p-6 text-xs text-[#bdcabc]/60 text-center shrink-0">
-        AutomaStock v1.0.0
+      <div className="p-6 text-xs text-gray-400 dark:text-gray-500 font-medium text-center shrink-0 border-t border-gray-100 dark:border-gray-700/50">
+        AutomaStock v2
       </div>
     </aside>
   );
