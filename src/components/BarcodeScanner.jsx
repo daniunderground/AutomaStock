@@ -54,27 +54,27 @@ export function BarcodeScanner({ isOpen, onClose, onScan }) {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
-          className="fixed inset-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl z-[9999] flex flex-col pt-12 px-4 pb-8 transition-colors"
+          className="fixed inset-0 bg-white/95 backdrop-blur-xl z-[9999] flex flex-col pt-12 px-4 pb-8 transition-colors"
         >
-          <div className="flex justify-between items-center mb-8 text-gray-900 dark:text-gray-50">
+          <div className="flex justify-between items-center mb-8 text-gray-900">
             <div className="flex items-center gap-3">
-              <ScanLine className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+              <ScanLine className="w-6 h-6 text-[var(--primary)]" />
               <h2 className="text-2xl font-bold tracking-tight">Escanear Produto</h2>
             </div>
             <button 
               onClick={onClose} 
-              className="p-2.5 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 rounded-full transition-colors"
+              className="p-2.5 bg-gray-100 hover:bg-gray-200 text-gray-500 rounded-full transition-colors"
             >
               <X className="w-6 h-6" />
             </button>
           </div>
 
-          <div className="flex-1 rounded-3xl overflow-hidden bg-black flex flex-col items-center justify-center relative shadow-xl border border-gray-200 dark:border-gray-800">
+          <div className="flex-1 rounded-[1.5rem] overflow-hidden bg-black flex flex-col items-center justify-center relative shadow-xl border border-[#E0E3E5]">
             <div id="reader" className="w-full h-full text-white [&>div]:border-none [&>div>video]:w-full [&>div>video]:h-full [&>div>video]:object-cover" style={{ border: 'none' }}></div>
           </div>
 
-          <div className="mt-8 text-center text-gray-500 dark:text-gray-400 w-full">
-            <p className="text-lg font-bold text-gray-900 dark:text-gray-50">Foque no QRCode ou Código de Barras</p>
+          <div className="mt-8 text-center text-gray-500 w-full">
+            <p className="text-lg font-bold text-gray-900">Foque no QRCode ou Código de Barras</p>
             <p className="text-sm mt-1">A leitura e o direcionamento são automáticos</p>
           </div>
         </motion.div>

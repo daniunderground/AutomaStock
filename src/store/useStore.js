@@ -12,6 +12,7 @@ const useStore = create(
   categories: [],
   products: [],
   movimentacoes: [],
+  searchQuery: '',
   loading: false,
 
   // Auth Actions
@@ -38,15 +39,10 @@ const useStore = create(
   },
 
   // Theme Actions
-  toggleTheme: () => set((state) => {
-    const newTheme = state.theme === 'dark' ? 'light' : 'dark';
-    if (newTheme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    return { theme: newTheme };
-  }),
+  setTheme: (theme) => set({ theme }),
+  
+  // Search Actions
+  setSearchQuery: (searchQuery) => set({ searchQuery }),
   
   // Data Actions
   fetchMovimentacoes: async () => {
@@ -87,18 +83,19 @@ const useStore = create(
     const user = get().user;
     if (!user) return;
     
+    // Se houver trigger no Supabase, inserir quantidade direto + movimentação duplica o valor.
+    // Inserimos com 0 e deixamos a movimentação adicionar o saldo.
+    const initialQty = parseInt(product.quantidade) || 0;
     const { data, error } = await supabase
       .from('produtos')
-      .insert([{ ...product, user_id: user.id }])
+      .insert([{ ...product, quantidade: 0, user_id: user.id }])
       .select();
       
     if (!error && data) {
-      set((state) => ({ products: [data[0], ...state.products] }));
-      
-      // Registrar no histórico se houver estoque inicial
-      if (data[0].quantidade > 0) {
-        await get().addMovimentacao(data[0].id, 'entrada', data[0].quantidade, 'Estoque Inicial (Cadastro)');
+      if (initialQty > 0) {
+        await get().addMovimentacao(data[0].id, 'entrada', initialQty, 'Estoque Inicial (Cadastro)');
       } else {
+        set((state) => ({ products: [data[0], ...state.products] }));
         alert('Produto salvo com sucesso!');
       }
     } else {
@@ -120,24 +117,49 @@ const useStore = create(
   },
 
   updateProduct: async (id, updates) => {
-    const oldProduct = get().products.find(p => p.id === id);
-    const { error } = await supabase
+    // Get latest data from DB to avoid stale state doubling bug
+    const { data: oldProduct } = await supabase
       .from('produtos')
-      .update(updates)
-      .eq('id', id);
+      .select('quantidade')
+      .eq('id', id)
+      .single();
+
+    const newUpdates = { ...updates };
+    
+    let diff = 0;
+    let tipo = null;
+    let qtdAbs = 0;
+
+    if (newUpdates.quantidade !== undefined && oldProduct) {
+      const newQty = parseInt(newUpdates.quantidade) || 0;
+      const oldQty = parseInt(oldProduct.quantidade) || 0;
+      
+      if (newQty !== oldQty) {
+        diff = newQty - oldQty;
+        tipo = diff > 0 ? 'entrada' : 'saida';
+        qtdAbs = Math.abs(diff);
+      }
+      delete newUpdates.quantidade;
+    }
+
+    let error = null;
+    if (Object.keys(newUpdates).length > 0) {
+      const { error: updateError } = await supabase
+        .from('produtos')
+        .update(newUpdates)
+        .eq('id', id);
+      error = updateError;
+    }
       
     if (!error) {
-      set((state) => ({
-        products: state.products.map(p => p.id === id ? { ...p, ...updates } : p)
-      }));
-
-      // Registrar no histórico se a quantidade foi alterada manualmente
-      if (updates.quantidade !== undefined && oldProduct && updates.quantidade !== oldProduct.quantidade) {
-        const diff = updates.quantidade - oldProduct.quantidade;
-        const tipo = diff > 0 ? 'entrada' : 'saida';
-        const qtdAbs = Math.abs(diff);
-        await get().addMovimentacao(id, tipo, qtdAbs, 'Ajuste Manual via Cadastro');
-      } else {
+      if (qtdAbs > 0) {
+        // Reset local quantity to the old one before fetching, to avoid doubled UI if fetch is slow
+        // Actually, better to just let the fetch update everything.
+        await get().addMovimentacao(id, tipo, qtdAbs, 'Ajuste Manual via Edição');
+      } else if (Object.keys(newUpdates).length > 0) {
+        set((state) => ({
+          products: state.products.map(p => p.id === id ? { ...p, ...newUpdates } : p)
+        }));
         alert('Produto atualizado com sucesso!');
       }
     } else {
@@ -227,21 +249,30 @@ const useStore = create(
 
   addMovimentacao: async (produto_id, tipo, quantidade, motivo) => {
     const user = get().user;
-    if (!user) return;
+    if (!user) return false;
+
+    const parsedQtd = parseInt(quantidade) || 0;
+    if (parsedQtd <= 0) return false;
+
+    const product = get().products.find(p => p.id === produto_id);
+    if (!product) return false;
+
+    // Let the database trigger handle the product quantity update
+    // The trigger will automatically add or subtract from 'produtos' table based on the new 'movimentacoes' row.
 
     const { error } = await supabase
       .from('movimentacoes')
-      .insert([{ user_id: user.id, produto_id, tipo, quantidade: parseInt(quantidade) || 0, motivo }]);
+      .insert([{ user_id: user.id, produto_id, tipo, quantidade: parsedQtd, motivo }]);
 
     if (!error) {
       // Atualizar lista de produtos e movimentacoes para refletir a nova quantidade e logs
       get().fetchProducts();
       if (get().fetchMovimentacoes) get().fetchMovimentacoes();
-      alert(`Movimentação de ${tipo} salva!`);
+      alert(`Movimentação de ${tipo} salva com sucesso!`);
       return true;
     } else {
       console.error(error);
-      alert('Erro ao salvar movimentação: ' + error.message);
+      alert('Erro ao salvar histórico de movimentação: ' + error.message);
       return false;
     }
   }

@@ -8,7 +8,7 @@ export function AppLayout() {
   const location = useLocation();
 
   return (
-    <div className="flex h-screen w-full font-sans text-gray-900 dark:text-gray-50 bg-[#F4F6F8] dark:bg-gray-900 overflow-hidden transition-colors">
+    <div className="flex h-screen w-full font-sans overflow-hidden bg-background text-foreground transition-colors duration-300">
       <div className="flex w-full h-full z-10">
         <Sidebar className="z-20" />
         <div className="flex-1 flex flex-col h-full relative z-10 w-full">

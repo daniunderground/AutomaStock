@@ -15,26 +15,48 @@ function App() {
   const [initLoading, setInitLoading] = useState(true);
 
   useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
+    const applyTheme = () => {
+      const isDark = 
+        theme === 'dark' || 
+        (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        
+      if (isDark) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    };
+
+    applyTheme();
+
+    if (theme === 'system') {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const listener = () => applyTheme();
+      mediaQuery.addEventListener('change', listener);
+      return () => mediaQuery.removeEventListener('change', listener);
     }
   }, [theme]);
 
   useEffect(() => {
     // Pegar sessão atual na inicialização
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data, error }) => {
+      if (error) {
+        console.error("Erro no Supabase getSession:", error);
+      }
+      const session = data?.session || null;
       setSession(session);
       setInitLoading(false);
       if (session) {
         fetchCategories();
         fetchProducts();
       }
+    }).catch(error => {
+      console.error("Erro inesperado ao pegar sessão:", error);
+      setInitLoading(false);
     });
 
     // Escutar mudanças de autenticação (login, logout)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const authListener = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       if (session) {
         fetchCategories();
@@ -42,7 +64,11 @@ function App() {
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      if (authListener?.data?.subscription) {
+        authListener.data.subscription.unsubscribe();
+      }
+    };
   }, [setSession, fetchCategories, fetchProducts]);
 
   if (initLoading) {

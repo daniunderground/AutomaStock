@@ -1,0 +1,3 @@
+AutomaStock
+
+senha data base supabase = 302515DD#zL
